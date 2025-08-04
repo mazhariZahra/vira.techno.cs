@@ -75,7 +75,7 @@ def reset_password_view(request):
 
     return render(request, 'main/reset-password.html')
 
-@login_required
+
 def home_view(request):
     cards = ServiceCard.objects.all()  # کارت‌ها را از دیتابیس می‌خونیم
     sliders = Slider.objects.all().order_by('order')
