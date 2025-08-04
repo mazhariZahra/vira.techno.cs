@@ -77,22 +77,22 @@ def reset_password_view(request):
 
 
 def home_view(request):
-    cards = ServiceCard.objects.all()  # کارت‌ها را از دیتابیس می‌خونیم
+    cards = ServiceCard.objects.all()
     sliders = Slider.objects.all().order_by('order')
     stats = Stat.objects.all()
-    # منطق پیشنهاد هوشمند
     recommendations = []
-    user_orders = Order.objects.filter(user=request.user).values_list('service_id', flat=True)
-    if user_orders:
-        # پیشنهاد خدمات مرتبط که قبلاً نگرفته
-        related_services = ServiceCard.objects.exclude(id__in=user_orders).order_by('?')[:3]  # ۳ کارت تصادفی
-        for card in related_services:
-            recommendations.append({
-                'title': card.title,
-                'description': card.description,
-                'icon_class': card.icon_class,
-                'order_link': reverse('order_list') + f'?service={card.id}'
-            })
+    # منطق پیشنهاد هوشمند فقط برای کاربرهای واردشده
+    if request.user.is_authenticated:
+        user_orders = Order.objects.filter(user=request.user).values_list('service_id', flat=True)
+        if user_orders:
+            related_services = ServiceCard.objects.exclude(id__in=user_orders).order_by('?')[:3]
+            for card in related_services:
+                recommendations.append({
+                    'title': card.title,
+                    'description': card.description,
+                    'icon_class': card.icon_class,
+                    'order_link': reverse('order_list') + f'?service={card.id}'
+                })
     return render(request, 'main/home.html', {
         'cards': cards,
         'sliders': sliders,
