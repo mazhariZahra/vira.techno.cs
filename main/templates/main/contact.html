@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارتباط با ما - خدمات کامپیوتری ویرا تکنو</title>
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    {% load static %}
+    <link rel="icon" type="image/jpg" href="{% static 'main/image/logo4 copy.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .header {
+            background: url('{% static "main/image/background.jpg" %}') no-repeat center center/cover;
+            color: #fff;
+            text-align: center;
+            padding: 4rem 1rem;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .container {
+            max-width: 900px;
+            margin: -2rem auto 2rem;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in;
+        }
+        .contact-info {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .contact-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+        .contact-card i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        .contact-card p {
+            margin: 0;
+            color: #34495e;
+            font-size: 1.1rem;
+        }
+        .form-label {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ارتباط با ما</h1>
+    </div>
+    <div class="container">
+        {% if contact_info %}
+            <div class="contact-info">
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>{{ contact_info.address|safe }}</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <p>{{ contact_info.phone }}</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <p>{{ contact_info.email }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">اطلاعات تماس هنوز ثبت نشده است. لطفاً از پنل ادمین اطلاعات را وارد کنید.</p>
+        {% endif %}
+        <h3 class="mt-4">ارسال پیام</h3>
+        <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">نام شما</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">ایمیل</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">پیام شما</label>
+                <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">ارسال</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

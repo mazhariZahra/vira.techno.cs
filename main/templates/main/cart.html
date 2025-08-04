@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سبد خرید - خدمات کامپیوتری ویرا تکنو</title>
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="icon" type="image/jpg" href="{% static 'main/image/logo4 copy.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #2980b9 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 90px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/white-carbon-fiber.png') repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        .cart-container {
+            max-width: 1100px;
+            margin: 2.5rem auto;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            backdrop-filter: blur(10px);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        h1 {
+            color: #3498db;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(52, 152, 219, 0.2);
+            position: relative;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: #2980b9;
+            border-radius: 2px;
+        }
+        .cart-item {
+            background: linear-gradient(145deg, #ecf0f7 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            border-left: 6px solid #2980b9;
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.1), 0 0 10px rgba(41, 128, 185, 0.2) inset;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideUpFade 0.6s ease backwards;
+        }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cart-item:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 12px 30px rgba(52, 152, 219, 0.15), 0 0 15px rgba(41, 128, 185, 0.3) inset;
+        }
+        .cart-item::before {
+            content: '\f07a';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #3498db;
+            opacity: 0.5;
+            font-size: 1.2rem;
+        }
+        .cart-item h4 {
+            color: #34495e;
+            font-size: 1.3rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+        }
+        .cart-item p {
+            color: #7f8c8d;
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-danger::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transition: width 0.3s ease;
+        }
+        .btn-danger:hover::after {
+            width: 100%;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        .total {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2980b9;
+            background: linear-gradient(90deg, #e9f1fa 0%, #d5e6f5 100%);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 2rem;
+            border: 2px dashed #3498db;
+            position: relative;
+            overflow: hidden;
+        }
+        .total::before {
+            content: '\f291';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #2980b9;
+            opacity: 0.7;
+        }
+        .btn-pay {
+            background: linear-gradient(90deg, #2980b9 0%, #3498db 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            margin: 2rem auto 0;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .btn-pay::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+        .btn-pay:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .btn-pay:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+        }
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+            padding: 1.2rem 2.5rem;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        header:hover {
+            box-shadow: 0 6px 30px rgba(52, 152, 219, 0.3);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .logo img {
+            margin-right: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover img {
+            transform: rotate(10deg);
+        }
+        .logo h1 {
+            color: #3498db;
+            font-weight: 700;
+            margin: 0;
+        }
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2.5rem 0;
+            margin-top: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        footer::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to top, #2c3e50, transparent);
+        }
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-column h3 {
+            color: #3498db;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: #2980b9;
+        }
+        .footer-column p, .footer-column address {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="{% static 'main/image/logo4 copy.png' %}" alt="خدمات کامپیوتری ویرا تکنو" width="50" height="50" loading="lazy">
+                <h1>خدمات کامپیوتری ویرا تکنو</h1>
+            </div>
+            <a href="{% url 'order_list' %}" class="btn btn-primary" style="background-color: #3498db; border-color: #3498db;">بازگشت به سفارشات</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="cart-container">
+            <h1 class="text-center mb-4">سبد خرید</h1>
+            <div id="cart-items">
+                <!-- اینجا با جاوااسکریپت پر می‌شه -->
+            </div>
+            <div class="total" id="cart-total">جمع کل: 0 تومان</div>
+            <div class="text-center mt-3">
+                <button class="btn-pay" onclick="processPayment()">پرداخت</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>درباره ما</h3>
+                <p>ارائه‌دهنده تخصصی خدمات کامپیوتری به‌صورت حضوری و غیرحضوری با بالاترین کیفیت و در کمترین زمان<br>خدمات از راه دور (ریموت) در صورت نیاز<br>نمایندگی رسمی همراه اول</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Load cart from URL parameter
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cartData = urlParams.get('cart');
+            let cart = cartData ? JSON.parse(decodeURIComponent(cartData)) : JSON.parse(localStorage.getItem('cart')) || [];
+            if (!cartData) {
+                cart = JSON.parse(localStorage.getItem('cart')) || [];
+            }
+            localStorage.setItem('cart', JSON.stringify(cart)); // همگام‌سازی
+            console.log('Cart data in cart.html:', cart); // دیباگ
+            renderCart(cart);
+        });
+
+        function renderCart(cart) {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((order, index) => {
+                const price = parseFloat(order.totalPrice.replace(' تومان', '')) || 0;
+                total += price;
+                cartItems.innerHTML += `
+                    <div class="cart-item" style="animation-delay: ${index * 0.15}s">
+                        <h4>سفارش ${index + 1}</h4>
+                        <p>خدمت: ${order.serviceId}</p>
+                        <p>قیمت: ${order.totalPrice}</p>
+                        <p>توضیحات: ${order.description || 'بدون توضیحات'}</p>
+                        <button class="btn btn-danger btn-sm" onclick="removeItem(${index})">حذف</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-total').textContent = `جمع کل: ${total} تومان`;
+            updateCartCount(cart.length);
+            if (cart.length > 0) {
+                document.querySelector('.btn-pay').disabled = false;
+            }
+        }
+
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart(cart);
+        }
+
+        function updateCartCount(count) {
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) cartCount.textContent = count;
+        }
+
+        function processPayment() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('سبد خرید خالی است!');
+                return;
+            }
+            let totalAmount = 0;
+            cart.forEach(order => {
+                totalAmount += parseFloat(order.totalPrice.replace(' تومان', '')) || 0;
+            });
+            window.location.href = "{% url 'payment_process' %}?amount=" + totalAmount + "&cart=" + encodeURIComponent(JSON.stringify(cart));
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

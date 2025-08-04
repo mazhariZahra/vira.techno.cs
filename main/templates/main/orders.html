@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ثبت سفارش غیرحضوری خدمات کامپیوتری ویرا تکنو">
+    <title>سفارشات - خدمات کامپیوتری ویرا تکنو</title>
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="icon" type="image/jpg" href="{% static 'main/image/logo4 copy.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'main/home.css' %}">
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .orders-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        .service-card i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        .service-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .service-card p {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .order-form-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        .order-form-container.active {
+            display: block;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .btn-submit {
+            background-color: #3498db;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        .cart {
+            position: relative;
+            margin-left: 1rem;
+        }
+        .cart-icon {
+            font-size: 1.5rem;
+            color: #3498db;
+            cursor: pointer;
+        }
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .chat-button:hover {
+            transform: scale(1.1);
+        }
+        .chat-button i {
+            color: white;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="{% static 'main/image/logo4 copy.png' %}" alt="خدمات کامپیوتری ویرا تکنو" width="45" height="45" loading="lazy">
+                <h1>خدمات کامپیوتری ویرا تکنو</h1>
+            </div>
+            <button class="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> صفحه اصلی</a></li>
+                    <li><a href="{% url 'order_list' %}" class="active"><i class="fas fa-list"></i> سفارشات</a></li>
+                    <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> درباره ما</a></li>
+                    <li><a href="{% url 'contact' %}"><i class="fas fa-phone"></i> ارتباط با ما</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> پروفایل</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="auth-button">
+                <div class="cart">
+                    <i class="fas fa-shopping-cart cart-icon" onclick="showCart()"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+                {% if user.is_authenticated %}
+                    <span class="user-welcome">خوش آمدید، {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">خروج</a>
+                {% else %}
+                    <a href="{% url 'login' %}"><i class="fas fa-user"></i>ورود و ثبت‌نام</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="orders-container">
+            <h1 class="text-center mb-4">خدمات ما</h1>
+            {% if services %}
+                <div class="row">
+                    {% for service in services %}
+                        <div class="col-md-4 col-sm-6">
+                            <div class="service-card">
+                                <i class="fas {{ service.icon_class|default:'fa-cog' }}"></i>
+                                <h3>{{ service.title }}</h3>
+                                <p>{{ service.description }}</p>
+                                <button class="btn btn-primary" onclick="loadOrderForm('{{ service.id }}')">انتخاب</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="col-md-4 col-sm-6">
+                        <div class="service-card">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <h3>سایر</h3>
+                            <p>خدمات دیگر که در لیست بالا نیست</p>
+                            <button class="btn btn-primary" onclick="loadCustomServiceForm()">انتخاب</button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center text-warning">هیچ خدمتی در سیستم ثبت نشده است. با ادمین تماس بگیرید.</p>
+            {% endif %}
+
+            <div class="order-form-container" id="orderFormContainer">
+                <h2 id="formTitle"></h2>
+                {% if messages %}
+                    <div class="alert alert-success" role="alert">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form id="orderForm" action="{% url 'submit_order' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div id="dynamicFields"></div>
+                    <div class="mb-3">
+                        <label class="form-label">قیمت کل:</label>
+                        <input type="text" class="form-control" id="totalPrice" name="total_price" value="0 تومان" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">توضیحات سفارش</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" placeholder="جزئیات سفارش خود را وارد کنید" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn-submit">ثبت سفارش</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeForm()">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>درباره ما</h3>
+                <p>ارائه‌دهنده تخصصی خدمات کامپیوتری به‌صورت حضوری و غیرحضوری با بالاترین کیفیت و در کمترین زمان<br> خدمات از راه دور (ریموت) در صورت نیاز <br> نمایندگی رسمی همراه اول</p>
+                <div class="social-links">
+                    <a href="https://instagram.com/vira.techni.cs" aria-label="اینستاگرام" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://t.me/vira_techno_cs" aria-label="تلگرام" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="#" aria-label="واتساپ" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>تماس با ما</h3>
+                <address class="fas fa-map-marker-alt"> سمنان، بلوار جهادیه، نبش جهادیه ۲۶ </address>
+                <div class="contact-info">
+                    <p><i class="fas fa-mobile-alt"></i> ۰۹۹۱۲۸۳۹۲۰۰</p>
+                    <p><i class="fas fa-envelope"></i> vira.techno.cs@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>لینک‌های مفید</h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 0.8rem;"><a href="{% url 'terms_and_conditions' %}" style="color: #ecf0f1; text-decoration: none; transition: var(--transition);"><i class="fas fa-chevron-left"></i> شرایط و ضوابط</a></li>
+                    <li style="margin-bottom: 0.8rem;"><a href="{% url 'faq' %}" style="color: #ecf0f1; text-decoration: none; transition: var(--transition);"><i class="fas fa-chevron-left"></i> سوالات متداول</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>تمامی حقوق مادی و معنوی برای <strong>خدمات کامپیوتری ویراتکنو</strong> محفوظ است © 1404</p>
+        </div>
+    </footer>
+
+    <!-- دکمه چت شناور -->
+    <div class="chat-button" data-bs-toggle="modal" data-bs-target="#chatModal">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Modal برای چت -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">پشتیبانی آنلاین</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+                </div>
+                <div class="modal-body">
+                    <p>لطفاً پیام خود را وارد کنید یا مستقیماً با پشتیبانی تماس بگیرید:</p>
+                    <textarea class="form-control mb-3" id="chatMessage" rows="3" placeholder="پیام خود را اینجا بنویسید..."></textarea>
+                    <button class="btn btn-primary" onclick="sendChatMessage()">ارسال پیام</button>
+                    <a href="https://wa.me/989912839200" target="_blank" class="btn btn-success mt-2">تماس با واتساپ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load cart from localStorage on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            updateCartCount(cart.length);
+            console.log('Initial cart:', cart); // دیباگ
+        });
+
+        // Loader
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 500);
+        });
+
+        // Hamburger Menu
+        const hamburger = document.querySelector('.hamburger');
+        const nav = document.querySelector('nav');
+
+        hamburger.addEventListener('click', function () {
+            nav.classList.toggle('active');
+            this.innerHTML = nav.classList.contains('active') ?
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('nav') && !e.target.closest('.hamburger') && window.innerWidth <= 768) {
+                nav.classList.remove('active');
+                hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    if (window.innerWidth <= 768) {
+                        nav.classList.remove('active');
+                        hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                }
+            });
+        });
+
+        // Add shadow to header on scroll
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Load order form for a specific service
+        function loadOrderForm(serviceId) {
+            if (isNaN(serviceId)) {
+                alert('شناسه خدمت نامعتبر است.');
+                return;
+            }
+            const formContainer = document.getElementById('orderFormContainer');
+            formContainer.classList.add('active');
+            document.getElementById('formTitle').textContent = 'ثبت سفارش برای خدمت انتخاب‌شده';
+
+            fetch(`/get-order-form/${serviceId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        formContainer.classList.remove('active');
+                        return;
+                    }
+                    const dynamicFields = document.getElementById('dynamicFields');
+                    dynamicFields.innerHTML = '<input type="hidden" name="service_id" value="' + serviceId + '">';
+                    if (data.custom_fields.length === 0) {
+                        dynamicFields.innerHTML += '<p class="text-warning">هیچ فیلدی برای این خدمت تعریف نشده است. با ادمین تماس بگیرید.</p>';
+                    } else {
+                        data.custom_fields.forEach(field => {
+                            let input = '';
+                            if (field.field_type === 'text') {
+                                input = `<input type="text" class="form-control" id="field_${field.id}" name="field_${field.id}" ${field.is_required ? 'required' : ''}>`;
+                            } else if (field.field_type === 'number') {
+                                input = `<input type="number" class="form-control" id="field_${field.id}" name="field_${field.id}" ${field.is_required ? 'required' : ''} onchange="updatePrice(${serviceId}, ${field.id}, this.value, ${field.price_per_unit || 0})">`;
+                            } else if (field.field_type === 'file') {
+                                input = `<input type="file" class="form-control" id="field_${field.id}" name="field_${field.id}" ${field.is_required ? 'required' : ''}>`;
+                            }
+                            dynamicFields.innerHTML += `
+                                <div class="mb-3">
+                                    <label for="field_${field.id}" class="form-label">${field.field_name}${field.is_required ? ' *' : ''}</label>
+                                    ${input}
+                                </div>
+                            `;
+                        });
+                    }
+                    document.getElementById('totalPrice').value = `${data.total_price || 0} تومان`;
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                    alert(`خطا در ارتباط با سرور: ${error.message}. لطفاً با ادمین تماس بگیرید.`);
+                    formContainer.classList.remove('active');
+                });
+        }
+
+        // Load custom service form (for "سایر")
+        function loadCustomServiceForm() {
+            const formContainer = document.getElementById('orderFormContainer');
+            formContainer.classList.add('active');
+            document.getElementById('formTitle').textContent = 'ثبت سفارش برای خدمت دیگر';
+
+            const dynamicFields = document.getElementById('dynamicFields');
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label for="customService" class="form-label">نام خدمت (سایر) *</label>
+                    <input type="text" class="form-control" id="customService" name="custom_service" required>
+                </div>
+            `;
+            document.getElementById('totalPrice').value = '0 تومان';
+        }
+
+        // Update price based on numeric field value
+        function updatePrice(serviceId, fieldId, value, pricePerUnit) {
+            fetch(`/get-order-form/${serviceId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    let total_price = data.total_price || 0;
+                    if (value) {
+                        total_price += parseFloat(value) * (parseFloat(pricePerUnit) || 0);
+                    }
+                    document.getElementById('totalPrice').value = `${total_price} تومان`;
+                })
+                .catch(error => console.error('Error updating price:', error));
+        }
+
+        // Close form
+        function closeForm() {
+            const formContainer = document.getElementById('orderFormContainer');
+            formContainer.classList.remove('active');
+            document.getElementById('dynamicFields').innerHTML = '';
+            document.getElementById('totalPrice').value = '0 تومان';
+            document.getElementById('formTitle').textContent = '';
+        }
+
+        // Handle form submission and add to cart
+        document.getElementById('orderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const serviceId = document.querySelector('input[name="service_id"]')?.value || (document.getElementById('formTitle').textContent.includes('خدمت دیگر') ? 'custom' : 'unknown');
+            const totalPrice = document.getElementById('totalPrice').value;
+            const description = document.getElementById('description').value;
+            const dynamicFields = {};
+            document.querySelectorAll('#dynamicFields [name^="field_"]').forEach(input => {
+                dynamicFields[input.name.replace('field_', '')] = input.value;
+            });
+
+            const order = { serviceId, totalPrice, description, dynamicFields, timestamp: new Date().toISOString() };
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push(order);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount(cart.length);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('خطا در ثبت سفارش');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('سفارش با موفقیت ثبت شد و به سبد خرید اضافه شد!');
+                    this.reset();
+                    closeForm();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                alert('خطا در ثبت سفارش. لطفاً دوباره تلاش کنید.');
+            });
+        });
+
+        // Update cart count display
+        function updateCartCount(count) {
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        // Show cart page
+        function showCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('سبد خرید خالی است!');
+                return;
+            }
+            console.log('Cart data before encoding:', cart); // دیباگ
+            const cartData = encodeURIComponent(JSON.stringify(cart));
+            console.log('Encoded cart data:', cartData); // دیباگ
+            window.location.href = "{% url 'cart' %}?cart=" + cartData; // استفاده از URL تگ برای مسیر درست
+        }
+
+        // Send chat message
+        function sendChatMessage() {
+            const message = document.getElementById('chatMessage').value;
+            if (message.trim()) {
+                fetch('/send-message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('پیام شما با موفقیت ارسال شد. تیم پشتیبانی به زودی پاسخ می‌دهد!');
+                    } else {
+                        alert('خطا در ارسال پیام: ' + data.message);
+                    }
+                    document.getElementById('chatMessage').value = '';
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('chatModal'));
+                    modal.hide();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.');
+                });
+            } else {
+                alert('لطفاً پیام خود را وارد کنید!');
+            }
+        }
+
+        // تابع کمکی برای گرفتن CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

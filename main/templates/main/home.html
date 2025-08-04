@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="خدمات تخصصی کامپیوتری شامل تایپ، ترجمه، مقاله نویسی، طراحی سایت و برنامه نویسی"
+    />
+    <title>صفحه اصلی - خدمات کامپیوتری ویرا تکنو</title>
+    <link
+      href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    {% load static %}
+    <link
+      rel="icon"
+      type="image/jpg"
+      href="{% static 'main/image/logo4 copy.png' %}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/home.css' %}" />
+    <style>
+      .recommendations-section {
+        padding: 2rem 0;
+        background: #f8f9fa;
+      }
+      .recommendations-section h2 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .service-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+        text-align: center;
+      }
+      .service-card:hover {
+        transform: translateY(-5px);
+      }
+      .service-card i {
+        font-size: 2.5rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+      }
+      .service-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+      }
+      .service-card p {
+        color: #6c757d;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+      .btn:hover {
+        background-color: #2980b9;
+      }
+      .cart {
+        position: relative;
+        margin-left: 1rem;
+      }
+      .cart-icon {
+        font-size: 1.5rem;
+        color: #3498db;
+        cursor: pointer;
+      }
+      .cart-count {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+      .stats-section {
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        max-width: 1000px;
+        margin: auto;
+      }
+
+      .stat-card {
+        background-color: #ffffff; /* زمینه کارت سفید */
+        border-radius: 10px;
+        padding: 2rem 1.5rem;
+        width: 200px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* مشابه کارت‌های دیگه */
+        transition: transform 0.3s ease;
+        text-align: center;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-card i {
+        font-size: 2.5rem;
+        color: #3498db; /* آبی مشابه دکمه‌ها */
+        margin-bottom: 1rem;
+      }
+
+      .stat-card h3 {
+        font-size: 1.8rem;
+        color: #3498db;
+        margin: 0;
+      }
+
+      .stat-card p {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        color: #6c757d; /* خاکستری */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="loader">
+      <div class="loader-spinner"></div>
+    </div>
+
+    <header>
+      <div class="header-container">
+        <div class="logo">
+          <img
+            src="{% static 'main/image/logo4 copy.png' %}"
+            alt="خدمات کامپیوتری ویرا تکنو"
+            width="45"
+            height="45"
+            loading="lazy"
+          />
+          <h1>خدمات کامپیوتری ویرا تکنو</h1>
+        </div>
+        <button class="hamburger">
+          <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+          <ul>
+            <li>
+              <a href="{% url 'home' %}" class="active"
+                ><i class="fas fa-home"></i> صفحه اصلی</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'order_list' %}"
+                ><i class="fas fa-list"></i> سفارشات</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'about' %}"
+                ><i class="fas fa-info-circle"></i> درباره ما</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'contact' %}"
+                ><i class="fas fa-phone"></i> ارتباط با ما</a
+              >
+            </li>
+            {% if user.is_authenticated %}
+            <li>
+              <a href="{% url 'profile' %}"
+                ><i class="fas fa-user"></i> پروفایل</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+        <div class="auth-button">
+          <div class="cart">
+            <i class="fas fa-shopping-cart cart-icon" onclick="showCart()"></i>
+            <span class="cart-count" id="cart-count">0</span>
+          </div>
+          {% if user.is_authenticated %}
+          <span class="user-welcome">خوش آمدید، {{ user.username }}!</span>
+          <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">خروج</a>
+          {% else %}
+          <a href="{% url 'login' %}"
+            ><i class="fas fa-user"></i>ورود و ثبت نام</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div
+      id="carouselExampleIndicators"
+      class="carousel slide"
+      data-bs-ride="carousel"
+    >
+      <div class="carousel-indicators">
+        {% for slide in sliders %}
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="{{ forloop.counter0 }}"
+          class="{% if forloop.first %}active{% endif %}"
+          aria-label="Slide {{ forloop.counter }}"
+        ></button>
+        {% endfor %}
+      </div>
+
+      <div class="carousel-inner">
+        {% for slide in sliders %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <img
+            src="{{ slide.image.url }}"
+            class="d-block w-100"
+            alt="{{ slide.title }}"
+          />
+          <div class="carousel-caption d-none d-md-block">
+            <h5>{{ slide.title }}</h5>
+            <p>{{ slide.subtitle }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">قبلی</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">بعدی</span>
+      </button>
+    </div>
+
+    <main>
+      <!-- بخش پیشنهادات هوشمند -->
+      <section class="recommendations-section">
+        <h2>پیشنهادهای ویژه برای شما</h2>
+        <div class="row">
+          {% for recommendation in recommendations %}
+          <div class="col-md-4 col-sm-6">
+            <div class="service-card">
+              <i
+                class="fas {{ recommendation.icon_class|default:'fa-cog' }}"
+              ></i>
+              <h3>{{ recommendation.title }}</h3>
+              <p>{{ recommendation.description }}</p>
+              <a href="{{ recommendation.order_link }}" class="btn"
+                >سفارش دهید</a
+              >
+            </div>
+          </div>
+          {% endfor %} {% if not recommendations %}
+          <p class="text-center text-muted">
+            هنوز پیشنهادی برای شما نداریم. سفارشات بیشتری ثبت کنید!
+          </p>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- بخش خدمات فعلی -->
+      <h2>خدمات</h2>
+      <section class="services">
+        {% for card in cards %}
+        <div class="service-card">
+          <i class="{{ card.icon_class }}"></i>
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.description }}</p>
+          {% if card.order_link %}
+          <a href="{{ card.order_link }}" class="btn">سفارش دهید</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      <section class="stats-section">
+        <div class="stats-container">
+          {% for stat in stats %}
+          <div class="stat-card">
+            <i class="{{ stat.icon_class }}"></i>
+            <h3>{{ stat.value }}</h3>
+            <p>{{ stat.title }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-column">
+          <h3>درباره ما</h3>
+          <p>
+            ارائه‌دهنده تخصصی خدمات کامپیوتری به‌صورت حضوری و غیرحضوری با
+            بالاترین کیفیت و در کمترین زمان<br />
+            خدمات از راه دور (ریموت) در صورت نیاز <br />
+            نمایندگی رسمی همراه اول
+          </p>
+          <div class="social-links">
+            <a
+              href="https://instagram.com/vira.techni.cs"
+              aria-label="اینستاگرام"
+              target="_blank"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="https://t.me/vira_techno_cs"
+              aria-label="تلگرام"
+              target="_blank"
+              ><i class="fab fa-telegram"></i
+            ></a>
+            <a
+              href="https://wa.me/989912839200"
+              aria-label="واتساپ"
+              target="_blank"
+              ><i class="fab fa-whatsapp"></i
+            ></a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>تماس با ما</h3>
+          <address class="fas fa-map-marker-alt">
+            سمنان، بلوار جهادیه، نبش جهادیه ۲۶
+          </address>
+          <div class="contact-info">
+            <p><i class="fas fa-mobile-alt"></i> ۰۹۹۱۲۸۳۹۲۰۰</p>
+            <p><i class="fas fa-envelope"></i>vira.techno.cs@gmail.com</p>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>لینک‌های مفید</h3>
+          <ul style="list-style: none">
+            <li style="margin-bottom: 0.8rem">
+              <a
+                href="{% url 'terms_and_conditions' %}"
+                style="
+                  color: #ecf0f1;
+                  text-decoration: none;
+                  transition: var(--transition);
+                "
+                ><i class="fas fa-chevron-left"></i> شرایط و ضوابط</a
+              >
+            </li>
+            <li style="margin-bottom: 0.8rem">
+              <a
+                href="{% url 'faq' %}"
+                style="
+                  color: #ecf0f1;
+                  text-decoration: none;
+                  transition: var(--transition);
+                "
+                ><i class="fas fa-chevron-left"></i> سوالات متداول</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <p>
+          تمامی حقوق مادی و معنوی برای
+          <strong>خدمات کامپیوتری ویراتکنو</strong> محفوظ است © 1404
+        </p>
+      </div>
+    </footer>
+    <script>
+      // Loader
+      window.addEventListener("load", function () {
+        const loader = document.querySelector(".loader");
+        setTimeout(() => {
+          loader.classList.add("hidden");
+        }, 500);
+      });
+
+      // Hamburger Menu
+      const hamburger = document.querySelector(".hamburger");
+      const nav = document.querySelector("nav");
+
+      hamburger.addEventListener("click", function () {
+        nav.classList.toggle("active");
+        this.innerHTML = nav.classList.contains("active")
+          ? '<i class="fas fa-times"></i>'
+          : '<i class="fas fa-bars"></i>';
+      });
+
+      // Dropdown Menu for Mobile
+      const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+
+      dropdownToggles.forEach((toggle) => {
+        toggle.addEventListener("click", function (e) {
+          if (window.innerWidth <= 768) {
+            e.preventDefault();
+            const dropdown = this.nextElementSibling;
+            dropdown.classList.toggle("active");
+            const icon = this.querySelector(".fa-chevron-down");
+            icon.classList.toggle("fa-chevron-up");
+          }
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        if (
+          !e.target.closest("nav") &&
+          !e.target.closest(".hamburger") &&
+          window.innerWidth <= 768
+        ) {
+          nav.classList.remove("active");
+          hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute("href");
+          if (targetId === "#") return;
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: "smooth",
+            });
+            if (window.innerWidth <= 768) {
+              nav.classList.remove("active");
+              hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+          }
+        });
+      });
+
+      // Add shadow to header on scroll
+      window.addEventListener("scroll", function () {
+        const header = document.querySelector("header");
+        if (window.scrollY > 50) {
+          header.style.boxShadow = "0 5px 20px rgba(0, 0, 0, 0.1)";
+        } else {
+          header.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+        }
+      });
+
+      // Load cart from localStorage on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        updateCartCount(cart.length);
+      });
+
+      // Update cart count display
+      function updateCartCount(count) {
+        document.getElementById("cart-count").textContent = count;
+      }
+
+      // Show cart page
+      function showCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (cart.length === 0) {
+          alert("سبد خرید خالی است!");
+          return;
+        }
+        const cartData = encodeURIComponent(JSON.stringify(cart));
+        window.location.href = "{% url 'cart' %}?cart=" + cartData;
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
